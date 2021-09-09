@@ -43,27 +43,9 @@ else:
 # `declare_component` and call it done. The wrapper allows us to customize
 # our component's API: we can pre-process its input args, post-process its
 # output value, and add a docstring for users.
-def st_org_chart(chart_data=[], key=None):
-    """Create an autorefresh instance to trigger a refresh of the application
-
-    Parameters
-    ----------
-    interval: int
-        Amount of time in milliseconds to 
-    limit: int or None
-        Amount of refreshes to allow. If none, it will refresh infinitely.
-        While infinite refreshes sounds nice, it will continue to utilize
-        computing resources.
-    key: str or None
-        An optional key that uniquely identifies this component. If this is
-        None, and the component's arguments are changed, the component will
-        be re-mounted in the Streamlit frontend and lose its current state.
-
-    Returns
-    -------
-    int
-        Number of times the refresh has been triggered or max value of int
-    """
+def st_org_chart(
+    chart_data=[],
+    key=None):
 
     response = _component_func(chart_data=chart_data, key=key)
 
@@ -73,27 +55,3 @@ def st_org_chart(chart_data=[], key=None):
 # Add some test code to play with the component while it's in development.
 # During development, we can run this just as we would any other Streamlit
 # app: `$ streamlit run my_component/__init__.py`
-if not _RELEASE:
-    import streamlit as st
-
-    # We use the special "key" argument to assign a fixed identity to this
-    # component instance. By default, when a component's arguments change,
-    # it is considered a new instance and will be re-mounted on the frontend
-    # and lose its current state. In this case, we want to vary the component's
-    # "name" argument without having it get recreated.
-    # Run the autorefresh about every 2000 milliseconds (2 seconds) and stop
-    # after it's been refreshed 100 times.
-    count = st_autorefresh(interval=2000, limit=100, key="fizzbuzzcounter")
-
-    # The function returns a counter for number of refreshes. This allows the
-    # ability to make special requests at different intervals based on the count
-    if count == 0:
-        st.write("Count is zero")
-    elif count % 3 == 0 and count % 5 == 0:
-        st.write("FizzBuzz")
-    elif count % 3 == 0:
-        st.write("Fizz")
-    elif count % 5 == 0:
-        st.write("Buzz")
-    else:
-        st.write(f"Count: {count}")

@@ -16,6 +16,7 @@ function onRender(event: Event): void {
   const chart = new OrgChart()
     .container(".chart-container")
     .data(dataFlattened)
+    .svgHeight(window.innerHeight)
     .nodeWidth((d) => 384)
     .initialZoom(1)
     .nodeHeight((d) => 240)
@@ -28,7 +29,6 @@ function onRender(event: Event): void {
       contentArea.style.paddingTop = "60px"
 
       const card = document.createElement("div")
-      card.style.position = "relative"
       card.style.display = "flex"
       card.style.flexDirection = "column"
       card.style.borderRadius = "2px"
@@ -131,6 +131,11 @@ function onRender(event: Event): void {
       containerDiv.style.textAlign = "center"
       containerDiv.style.backgroundColor = "#FF4B4B"
       containerDiv.style.fontSize = "10px"
+
+      debugger
+      containerDiv.addEventListener("click", (event) => {
+        chart.onButtonClick(event, d)
+      })
 
       containerDiv.appendChild(iconDiv)
       return containerDiv.outerHTML
