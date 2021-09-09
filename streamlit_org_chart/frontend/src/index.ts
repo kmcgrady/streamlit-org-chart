@@ -2,7 +2,6 @@
 import { Streamlit, RenderData } from "streamlit-component-lib"
 import * as d3 from "d3"
 import { OrgChart } from "d3-org-chart"
-import PieChart from "./pieChart"
 
 /**
  * The component's render function. This will be called immediately after
@@ -17,44 +16,124 @@ function onRender(event: Event): void {
   const chart = new OrgChart()
     .container(".chart-container")
     .data(dataFlattened)
-    .nodeWidth((d) => 400)
-    .initialZoom(0.7)
-    .nodeHeight((d) => 235)
+    .nodeWidth((d) => 384)
+    .initialZoom(1)
+    .nodeHeight((d) => 240)
     .childrenMargin((d) => 40)
     .compactMarginBetween((d) => 15)
     .compactMarginPair((d) => 80)
     .nodeContent(function (d, i, arr, state) {
-      return `
-            <div style="padding-top:30px;background-color:none;margin-left:1px;height:${
-              d.height
-            }px;border-radius:2px;overflow:visible">
-              <div style="height:${
-                d.height - 32
-              }px;padding-top:0px;background-color:white;border:1px solid lightgray;">
+      const contentArea = document.createElement("div")
+      contentArea.style.height = `${d.height}px`
+      contentArea.style.paddingTop = "60px"
 
-                <img src=" ${
-                  d.data.imageUrl
-                }" style="margin-top:-30px;margin-left:${d.width / 2 - 30}px;border-radius:100px;width:60px;height:60px;" />
-               
-               <div style="margin-top:-30px;background-color:#3AB6E3;height:10px;width:${
-                 d.width - 2
-               }px;border-radius:1px"></div>
+      const card = document.createElement("div")
+      card.style.position = "relative"
+      card.style.display = "flex"
+      card.style.flexDirection = "column"
+      card.style.borderRadius = "2px"
+      card.style.overflow = "visible"
+      card.style.height = `${d.height - 60}px`
+      card.style.border = "2px solid"
+      card.style.alignItems = "center"
 
-               <div style="padding:20px; padding-top:35px;text-align:center">
-                   <div style="color:#111672;font-size:16px;font-weight:bold"> ${
-                     d.data.name
-                   } </div>
-                   <div style="color:#404040;font-size:16px;margin-top:4px"> ${
-                     d.data.positionName
-                   } </div>
-               </div> 
-               <div style="display:flex;justify-content:space-between;padding-left:15px;padding-right:15px;">
-                 <div > Manages:  ${d.data._directSubordinates} 👤</div>  
-                 <div > Oversees: ${d.data._totalSubordinates} 👤</div>    
-               </div>
-              </div>     
-      </div>
-  `
+      contentArea.appendChild(card)
+
+      const img = document.createElement(d.data.profileUrl ? "a" : "div")
+      if (d.data.profileUrl) {
+        img.href = d.data.profileUrl
+        img.target = "_blank"
+      }
+      img.style.display = "block"
+      img.style.backgroundImage = `url('${
+        d.data.imageUrl || `https://picsum.photos/500/500?cache=${d.id}`
+      }')`
+      img.style.backgroundPositon = "center center"
+      img.style.backgroundSize = "cover"
+      img.style.backgroundRepeat = "no-repeat"
+      img.style.marginTop = "-50px"
+      img.style.width = "100px"
+      img.style.height = "100px"
+
+      card.appendChild(img)
+
+      const name = document.createElement("div")
+      name.style.fontSize = "24px"
+      name.style.fontWeight = "bold"
+      name.style.textAlign = "center"
+      name.style.marginTop = "12px"
+      name.textContent = d.data.name
+
+      card.appendChild(name)
+
+      const role = document.createElement("div")
+      role.style.fontSize = "16px"
+      role.style.textAlign = "center"
+      role.style.marginTop = "2px"
+      role.textContent = d.data.positionName
+
+      card.appendChild(role)
+
+      const locName = document.createElement("div")
+      locName.style.textAlign = "center"
+      locName.style.fontSize = "12px"
+      locName.style.fontStyle = "italic"
+      locName.style.marginTop = "28px"
+      locName.textContent = d.data.location
+
+      card.appendChild(locName)
+
+      return contentArea.outerHTML
+    })
+    .buttonContent(({ node, state }) => {
+      const icon = {
+        left: (d) => (d ? "‹" : "›"),
+        bottom: (d) => (d ? "ˬ" : "ˆ"),
+        right: (d) => (!d ? "‹" : "›"),
+        top: (d) => (!d ? "ˬ" : "ˆ"),
+      }
+
+      const marginTop = {
+        left: (d) => "-10px",
+        bottom: (d) => (d ? "-15px" : "0px"),
+        right: (d) => "-10px",
+        top: (d) => (!d ? "-15px" : "0px"),
+      }
+
+      const lineHeight = {
+        left: (d) => (d ? "1.2" : undefined),
+        bottom: (d) => (!d ? "1.2" : undefined),
+        right: (d) => (!d ? "1.2" : undefined),
+        top: (d) => (d ? "1.2" : undefined),
+      }
+
+      const height = {
+        left: (d) => (d ? "22px" : "23px"),
+        bottom: (d) => (!d ? "11px" : undefined),
+        right: (d) => (!d ? "22px" : "23px"),
+        top: (d) => (d ? "11px" : undefined),
+      }
+
+      const iconDiv = document.createElement("div")
+      iconDiv.textContent = icon[state.layout](node.children)
+      iconDiv.style.fontSize = "25px"
+      iconDiv.style.marginTop = marginTop[state.layout](node.children)
+      iconDiv.style.lineHeight = lineHeight[state.layout](node.children)
+      iconDiv.style.height = height[state.layout](node.children)
+      iconDiv.style.color = "white"
+
+      const containerDiv = document.createElement("div")
+      containerDiv.style.margin = "auto auto"
+      containerDiv.style.height = "20px"
+      containerDiv.style.width = "40px"
+      containerDiv.style.padding = "4px 15px"
+      containerDiv.style.borderRadius = "56px"
+      containerDiv.style.textAlign = "center"
+      containerDiv.style.backgroundColor = "#FF4B4B"
+      containerDiv.style.fontSize = "10px"
+
+      containerDiv.appendChild(iconDiv)
+      return containerDiv.outerHTML
     })
     .render()
 }
