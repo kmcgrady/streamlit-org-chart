@@ -43,7 +43,7 @@ else:
 # `declare_component` and call it done. The wrapper allows us to customize
 # our component's API: we can pre-process its input args, post-process its
 # output value, and add a docstring for users.
-def st_org_chart(chart_data, key=None):
+def st_org_chart(chart_data=[], key=None):
     """Create an autorefresh instance to trigger a refresh of the application
 
     Parameters
@@ -65,7 +65,7 @@ def st_org_chart(chart_data, key=None):
         Number of times the refresh has been triggered or max value of int
     """
 
-    chart_data = _component_func(chart_data, key=key)
+    response = _component_func(chart_data=chart_data, key=key)
 
     return None
 
