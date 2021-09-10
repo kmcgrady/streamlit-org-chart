@@ -44,7 +44,9 @@ function onRender(event: Event): void {
         img.href = d.data.profileUrl
         img.target = "_blank"
       }
-      img.style.display = "block"
+      img.style.display = "flex"
+      img.style.alignItems = "flex-end"
+      img.style.justifyContent = "flex-end"
       img.style.backgroundImage = `url('${
         d.data.imageUrl || `https://picsum.photos/500/500?cache=${d.id}`
       }')`
@@ -54,6 +56,26 @@ function onRender(event: Event): void {
       img.style.marginTop = "-50px"
       img.style.width = "100px"
       img.style.height = "100px"
+      img.style.textDecoration = "none"
+
+      const emoji = document.createElement("div")
+      emoji.style.width = "40px"
+      emoji.style.height = "40px"
+      emoji.style.display = "flex"
+      emoji.style.justifyContent = "center"
+      emoji.style.alignItems = "center"
+      emoji.style.textAlign = "center"
+      emoji.style.borderRadius = "10px"
+      emoji.style.marginRight = "-10px"
+      emoji.style.marginBottom = "-10px"
+      emoji.style.backgroundColor = "var(--secondary-background-color)"
+
+      const emojiText = document.createElement("div")
+      emojiText.style.fontSize = "24px"
+      emojiText.textContent = d.data.emoji || ""
+
+      emoji.appendChild(emojiText)
+      img.appendChild(emoji)
 
       card.appendChild(img)
 
@@ -61,8 +83,8 @@ function onRender(event: Event): void {
       name.style.fontSize = "24px"
       name.style.fontWeight = "bold"
       name.style.textAlign = "center"
-      name.style.marginTop = "12px"
-      name.textContent = d.data.name
+      name.style.marginTop = "14px"
+      name.textContent = d.data.name || ""
 
       card.appendChild(name)
 
@@ -70,18 +92,32 @@ function onRender(event: Event): void {
       role.style.fontSize = "16px"
       role.style.textAlign = "center"
       role.style.marginTop = "2px"
-      role.textContent = d.data.positionName
+      role.textContent = d.data.positionName || ""
 
       card.appendChild(role)
 
-      const locName = document.createElement("div")
-      locName.style.textAlign = "center"
-      locName.style.fontSize = "12px"
-      locName.style.fontStyle = "italic"
-      locName.style.marginTop = "28px"
-      locName.textContent = d.data.location
+      const options = document.createElement("div")
+      options.style.flexGrow = "1"
+      options.style.marginBottom = "24px"
+      options.style.display = "flex"
 
-      card.appendChild(locName)
+      const optionsText = document.createElement("div")
+      optionsText.style.display = "inline-block"
+      optionsText.style.alignSelf = "flex-end"
+      optionsText.style.textAlign = "center"
+      optionsText.style.fontSize = "14px"
+      const optionsContent = []
+      if (d.data.department) {
+        optionsContent.push(d.data.department)
+      }
+      if (d.data.location) {
+        optionsContent.push(d.data.location)
+      }
+
+      optionsText.textContent = optionsContent.join(" • ")
+
+      options.appendChild(optionsText)
+      card.appendChild(options)
 
       return contentArea.outerHTML
     })
@@ -131,11 +167,6 @@ function onRender(event: Event): void {
       containerDiv.style.textAlign = "center"
       containerDiv.style.backgroundColor = "#FF4B4B"
       containerDiv.style.fontSize = "10px"
-
-      debugger
-      containerDiv.addEventListener("click", (event) => {
-        chart.onButtonClick(event, d)
-      })
 
       containerDiv.appendChild(iconDiv)
       return containerDiv.outerHTML
