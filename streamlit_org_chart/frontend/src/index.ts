@@ -19,7 +19,7 @@ function onRender(event: Event): void {
     .svgHeight(window.innerHeight)
     .nodeWidth((d) => 384)
     .initialZoom(1)
-    .nodeHeight((d) => 240)
+    .nodeHeight((d) => 260)
     .childrenMargin((d) => 40)
     .compactMarginBetween((d) => 15)
     .compactMarginPair((d) => 80)
@@ -84,7 +84,7 @@ function onRender(event: Event): void {
       name.style.fontWeight = "bold"
       name.style.textAlign = "center"
       name.style.marginTop = "14px"
-      name.textContent = d.data.name || ""
+      name.textContent = d.data.primary || ""
 
       card.appendChild(name)
 
@@ -92,7 +92,7 @@ function onRender(event: Event): void {
       role.style.fontSize = "16px"
       role.style.textAlign = "center"
       role.style.marginTop = "2px"
-      role.textContent = d.data.positionName || ""
+      role.textContent = d.data.secondary || ""
 
       card.appendChild(role)
 
@@ -106,15 +106,8 @@ function onRender(event: Event): void {
       optionsText.style.alignSelf = "flex-end"
       optionsText.style.textAlign = "center"
       optionsText.style.fontSize = "14px"
-      const optionsContent = []
-      if (d.data.department) {
-        optionsContent.push(d.data.department)
-      }
-      if (d.data.location) {
-        optionsContent.push(d.data.location)
-      }
 
-      optionsText.textContent = optionsContent.join(" • ")
+      optionsText.textContent = d.data.tertiary || ""
 
       options.appendChild(optionsText)
       card.appendChild(options)
